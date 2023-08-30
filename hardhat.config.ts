@@ -32,11 +32,12 @@ function getNetworkUrl(networkType: string) {
     return alchemyApiKey ? `https://polygon-mainnet.g.alchemy.com/v2/${alchemyApiKey}` : "https://polygon.llamarpc.com";
   else if (networkType === "arbitrum")
     return alchemyApiKey ? `https://arb-mainnet.g.alchemy.com/v2/${alchemyApiKey}` : "https://arb1.arbitrum.io/rpc";
-  else if (networkType === "optimism")
+  else if (networkType === "optimism" || networkType === "optimisticEthereum")
     return alchemyApiKey ? `https://opt-mainnet.g.alchemy.com/v2/${alchemyApiKey}` : "https://mainnet.optimism.io";
   else if (networkType === "fantom") return `https://rpc.ftm.tools/`;
   else if (networkType === "bnb") return `https://bsc-dataseed.binance.org`;
   else if (networkType === "xdai") return `https://rpc.ankr.com/gnosis`;
+  else if (networkType === "goerli") return `https://eth-goerli.g.alchemy.com/v2/${alchemyApiKey}`;
   else return alchemyApiKey ? `https://eth-mainnet.alchemyapi.io/v2/${alchemyApiKey}` : "https://cloudflare-eth.com";
 }
 
@@ -70,7 +71,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 31337,
       forking: {
-        url: "https://mainnet.optimism.io",
+        url: `https://opt-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
         blockNumber: 73304256, // mined 09/02/2023
       },
     },
@@ -78,16 +79,20 @@ const config: HardhatUserConfig = {
     polygon: createConfig("polygon"),
     arbitrum: createConfig("arbitrum"),
     optimism: createConfig("optimism"),
+    optimisticEthereum: createConfig("optimism"),
     bnb: createConfig("bnb"),
     fantom: createConfig("fantom"),
     xdai: createConfig("xdai"),
+    goerli: createConfig("goerli"),
   },
   etherscan: {
     apiKey: {
       // mainnets
       polygon: String(process.env.POLYGONSCAN_API_KEY),
-      optimism: String(process.env.OPTIMISM_API_KEY),
-      arbitrum: String(process.env.ARBISCAN_API_KEY),
+      optimisticEthereum: String(process.env.OPTIMISM_API_KEY),
+      // arbitrum: String(process.env.ARBISCAN_API_KEY),
+      // testnets
+      goerli: String(process.env.ETHERSCAN_API_KEY),
     },
   },
 };

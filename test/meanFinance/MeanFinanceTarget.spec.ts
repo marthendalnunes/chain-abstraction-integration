@@ -1,14 +1,6 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import {
-  BigNumber,
-  BigNumberish,
-  constants,
-  Contract,
-  providers,
-  utils,
-  Wallet,
-} from "ethers";
+import { BigNumber, BigNumberish, constants, Contract, providers, utils, Wallet } from "ethers";
 import { DEFAULT_ARGS } from "../../deploy";
 import { ERC20_ABI } from "@0xgafu/common-abi";
 import { getRandomBytes32 } from "@connext/utils";
@@ -26,7 +18,7 @@ const fund = async (
   asset: string,
   wei: BigNumberish,
   from: Wallet,
-  to: string
+  to: string,
 ): Promise<providers.TransactionReceipt> => {
   if (asset === constants.AddressZero) {
     const tx = await from.sendTransaction({ to, value: wei });
@@ -49,9 +41,7 @@ describe("MeanFinanceTarget", function () {
   const RANDOM_TOKEN = "0x4200000000000000000000000000000000000042"; // this is OP
   const ASSET_DECIMALS = 6; // USDC decimals on op
 
-  const permissions = [
-    { operator: NOT_ZERO_ADDRESS, permissions: [Permission.INCREASE] },
-  ];
+  const permissions = [{ operator: NOT_ZERO_ADDRESS, permissions: [Permission.INCREASE] }];
   const swaps = 10;
   const interval = SwapInterval.ONE_DAY.seconds;
 
@@ -70,14 +60,8 @@ describe("MeanFinanceTarget", function () {
     // get whale
     whale = (await ethers.getImpersonatedSigner(WHALE)) as unknown as Wallet;
     // deploy contract
-    const { MeanFinanceTarget } = await deployments.fixture([
-      "meanfinancetarget",
-    ]);
-    target = new Contract(
-      MeanFinanceTarget.address,
-      MeanFinanceTarget.abi,
-      ethers.provider
-    );
+    const { MeanFinanceTarget } = await deployments.fixture(["meanfinancetarget"]);
+    target = new Contract(MeanFinanceTarget.address, MeanFinanceTarget.abi, ethers.provider);
 
     connext = new Contract(CONNEXT, ConnextInterface.abi, ethers.provider);
     // setup tokens
@@ -99,30 +83,15 @@ describe("MeanFinanceTarget", function () {
   describe("xReceive", () => {
     before(async () => {
       // fund the target contract with eth, random token, and target asset
-      await fund(
-        constants.AddressZero,
-        utils.parseEther("1"),
-        wallet,
-        target.address
-      );
+      await fund(constants.AddressZero, utils.parseEther("1"), wallet, target.address);
 
-      await fund(
-        USDC,
-        utils.parseUnits("1", ASSET_DECIMALS),
-        whale,
-        target.address
-      );
+      await fund(USDC, utils.parseUnits("1", ASSET_DECIMALS), whale, target.address);
 
-      await fund(
-        randomToken.address,
-        utils.parseUnits("1", await randomToken.decimals()),
-        whale,
-        target.address
-      );
+      await fund(randomToken.address, utils.parseUnits("1", await randomToken.decimals()), whale, target.address);
     });
 
-    it("should work when from is ERC20", async () => {      
-      const fromAsset  = randomToken;
+    it("should work when from is ERC20", async () => {
+      const fromAsset = randomToken;
       const toAsset = tokenUSDC;
       // get reasonable amount out
 
@@ -130,12 +99,8 @@ describe("MeanFinanceTarget", function () {
       const randomDecimals = await fromAsset.decimals();
       const normalized =
         randomDecimals > ASSET_DECIMALS
-          ? adapterBalance.div(
-              BigNumber.from(10).pow(randomDecimals - ASSET_DECIMALS)
-            )
-          : adapterBalance.mul(
-              BigNumber.from(10).pow(ASSET_DECIMALS - randomDecimals)
-            );
+          ? adapterBalance.div(BigNumber.from(10).pow(randomDecimals - ASSET_DECIMALS))
+          : adapterBalance.mul(BigNumber.from(10).pow(ASSET_DECIMALS - randomDecimals));
       // use 0.1% slippage (OP is > $2, adapter = usdc)
       const lowerBound = normalized.mul(10).div(10_000);
       const calldata = await target.connect(wallet).encode(
@@ -146,7 +111,7 @@ describe("MeanFinanceTarget", function () {
         swaps,
         interval,
         wallet.address,
-        permissions
+        permissions,
       );
 
       const transferId = getRandomBytes32();
@@ -154,20 +119,11 @@ describe("MeanFinanceTarget", function () {
       // send tx
       const tx = await target
         .connect(wallet)
-        .xReceive(
-          transferId,
-          BigNumber.from(adapterBalance),
-          fromAsset.address,
-          wallet.address,
-          DOMAIN,
-          calldata
-        );
+        .xReceive(transferId, BigNumber.from(adapterBalance), fromAsset.address, wallet.address, DOMAIN, calldata);
 
       const receipt = await tx.wait();
       // Ensure tokens got sent to connext
-      expect((await fromAsset.balanceOf(target.address)).toString()).to.be.eq(
-        "0"
-      );
+      expect((await fromAsset.balanceOf(target.address)).toString()).to.be.eq("0");
     });
   });
 });
