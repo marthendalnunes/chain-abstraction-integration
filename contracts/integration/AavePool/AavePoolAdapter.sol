@@ -2,7 +2,6 @@
 pragma solidity ^0.8.10;
 
 import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import {Pool} from "@aave/core-v3/contracts/protocol/pool/Pool.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract AavePoolAdapter {
@@ -18,7 +17,7 @@ contract AavePoolAdapter {
   /// @param _amount Amount of tokens to deposit
   /// @param _onBehalfOf Address of the user
   /// @param _referralCode Referral code for Aave
-  function _supply(address _asset, uint256 _amount, address _onBehalfOf, uint16 _referralCode) public returns (bool) {
+  function _supply(address _asset, uint256 _amount, address _onBehalfOf, uint16 _referralCode) internal returns (bool) {
     require(_amount > 0, "Zero Amount");
 
     // Increasing the allowance
