@@ -4,7 +4,7 @@ export const DEFAULT_ARGS: Record<number, any> = {
     CONNEXT: "0x8f7492DE823025b4CfaAB1D34c58963F2af5DEDA",
     WETH: "0x4200000000000000000000000000000000000006", // Weth on Optimism
     USDC: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607", // USDC on Optimism
-    DOMAIN: "6648936", // Ethereum domain ID
+    DOMAIN: "1886350457", // Polygon domain ID
     ONEINCH_ROUTER: "",
     UNIV3_ROUTER: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   },
@@ -51,6 +51,15 @@ export const DEFAULT_ARGS: Record<number, any> = {
     ONEINCH_ROUTER: "0x1111111254EEB25477B68fb85Ed929f73A960582",
     UNIV2_ROUTER: "0x1C232F01118CB8B424793ae03F870aa7D0ac7f77", // HoneysSwap UniV2 Router
   },
+  // Goerli
+  5: {
+    CONNEXT: "0xFCa08024A6D4bCc87275b1E4A1E22B71fAD7f649",
+    WETH: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    USDC: "0xd35CCeEAD182dcee0F148EbaC9447DA2c4D449c4",
+    DOMAIN: "1735353714", // Polygon domain ID
+    ONEINCH_ROUTER: "",
+    UNIV3_ROUTER: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+  },
 };
 
 export const MIDAS_CONFIG: Record<number, any> = {
@@ -68,5 +77,20 @@ export const MIDAS_CONFIG: Record<number, any> = {
 export const MEAN_CONFIG: Record<number, any> = {
   137: {
     HUB: "0xA5AdC5484f9997fBF7D405b9AA62A7d88883C345",
+  },
+  31337: {
+    HUB: "0xA5AdC5484f9997fBF7D405b9AA62A7d88883C345",
+  },
+};
+
+export const AAVE_CONFIG: Record<number, any> = {
+  5: {
+    POOL: "0x7b5C526B7F8dfdff278b4a3e045083FBA4028790",
+  },
+  10: {
+    POOL: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+  },
+  31337: {
+    POOL: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
   },
 };
